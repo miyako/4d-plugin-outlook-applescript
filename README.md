@@ -68,7 +68,24 @@ if([runningApplications count])
 
 Unlike ``com.apple.mail``, it is possible for there to be multiple copies of Microsoft Outlook installed. The above method (as opposed to a simple ``[SBApplication applicationWithBundleIdentifier:@"com.microsoft.Outlook"]``) is an attempt to make sure that the current running copy of Outlook is specified. **If multiple copies of Outlook are running, the behaviour is undefined**. 
 
+The code to obtain the list of ``sources`` looks like this:
+
+```objc
+SBElementArray *selection = [application selection];
+NSArray *sources = [selection arrayByApplyingSelector:@selector(source)];
+``` 
+
 The reason why it is good to use ``SBElementArray`` to create a filtered array is explained in the [documentation](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/ImproveScriptingBridgePerf/ImproveScriptingBridgePerf.html#//apple_ref/doc/uid/TP40006104-CH6-SW1).
+
+The code to obtain the list of ``subjects`` looks like this:
+
+```objc
+[selection enumerateObjectsUsingBlock:^(outlookMessage *obj, NSUInteger i, BOOL *stop) {
+	json_set_s(json, (NSString *)[obj subject]);
+}];
+``` 
+
+This is because (unlike ``com.apple.mail``) Microsoft Outlook returns ``nil``, not ``[NSNull null]``  when the subject is empty.
 
 If ``Outlook selection source`` **or** ``Outlook selection subject`` is passed, a JSON array of string is returned. You can use ``JSON Parse`` with ``Is collection`` to parse it as a collection. (default=``Outlook selection source``)
 
