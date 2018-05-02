@@ -13,7 +13,7 @@ Get the source (MIME) of selected emails from Microsoft Outlook via [Scripting B
 
 ### Releases
 
-
+[1.1](https://github.com/miyako/4d-plugin-outlook-applescript/releases/tag/1.1)
 
 ## Syntax
 
