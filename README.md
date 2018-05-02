@@ -57,10 +57,16 @@ sdef Microsoft\ Outlook.app | sdp -fh --basename outlook
 The code to obtain the list of ``sources`` or ``subject`` looks like this:
 
 ```objc
-
-
-
+NSArray *runningApplications = [NSRunningApplication runningApplicationsWithBundleIdentifier:@"com.microsoft.Outlook"];
+		
+if([runningApplications count])
+{
+	outlookApplication *application = [SBApplication applicationWithProcessIdentifier:[[runningApplications objectAtIndex:0]processIdentifier]];
+	SBElementArray *selection = [application selection];			
+}
 ``` 
+
+Unlike ``com.apple.mail``, it is possible for there to be multiple copies of Microsoft Outlook installed.
 
 The reason why it is good to use ``SBElementArray`` to create a filtered array is explained in the [documentation](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ScriptingBridgeConcepts/ImproveScriptingBridgePerf/ImproveScriptingBridgePerf.html#//apple_ref/doc/uid/TP40006104-CH6-SW1).
 
