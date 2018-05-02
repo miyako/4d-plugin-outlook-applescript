@@ -168,31 +168,42 @@ void Outlook_Get_selection(sLONG_PTR *pResult, PackagePtr pParams)
 		if([runningApplications count])
 		{
 			outlookApplication *application = [SBApplication applicationWithProcessIdentifier:[[runningApplications objectAtIndex:0]processIdentifier]];
-			SBElementArray *selection = [application selection];
+			SBElementArray *selection = [application selectedObjects];
 			
 			switch (Param1.getIntValue()) {
 				case 2:
 				{
+					/*
+					 //Outlook returns nil (not NSNull) when the subject is empty, so we can't use this. shame.
 					NSArray *subjects = [selection arrayByApplyingSelector:@selector(subject)];
-					for (id subject in subjects) {
-						json_set_s(json, (NSString *)subject);
-					}
+					 */
+					[selection enumerateObjectsUsingBlock:^(outlookMessage *obj, NSUInteger i, BOOL *stop) {
+						json_set_s(json, (NSString *)[obj subject]);
+					}];
 				}
 					break;
 				case 3:
 				{
 					NSArray *sources = [selection arrayByApplyingSelector:@selector(source)];
-					NSArray *subjects = [selection arrayByApplyingSelector:@selector(subject)];
+					//NSArray *subjects = [selection arrayByApplyingSelector:@selector(subject)];
 					
-					for(NSUInteger i = 0; i < [sources count];++i)
-					{
+					[selection enumerateObjectsUsingBlock:^(outlookMessage *obj, NSUInteger i, BOOL *stop) {
 						JSONNODE *n = json_new(JSON_NODE);
-						json_set_s(n, L"subject", (NSString *)[subjects objectAtIndex:i]);
+						json_set_s(n, L"subject", (NSString *)[obj subject]);
 						json_set_s(n, L"source", (NSString *)[sources objectAtIndex:i]);
 						json_push_back(json, n);
 						PA_YieldAbsolute();
-					}
-					
+					}];
+					/*
+					 for(NSUInteger i = 0; i < [sources count];++i)
+					 {
+					 JSONNODE *n = json_new(JSON_NODE);
+					 json_set_s(n, L"subject", (NSString *)[subjects objectAtIndex:i]);
+					 json_set_s(n, L"source", (NSString *)[sources objectAtIndex:i]);
+					 json_push_back(json, n);
+					 PA_YieldAbsolute();
+					 }
+					 */
 				}
 					break;
 				default:
