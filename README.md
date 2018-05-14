@@ -101,3 +101,9 @@ JSON PARSE ARRAY($json;$m)
 $json:=Outlook Get selection (Outlook selection source)
 $s:=JSON Parse($json;Is collection)
 ```
+
+### Tip
+
+You can test if the drag source is Outlook by looking for ``dyn.ah62d4rv4gu8ynywrqz31g2phqzkgc65yqzvg82pwqvnhw6df`` which is evidently the data for ``ERMessagePasteboardType``. Note that ``ERMessagePasteboardType``, which existed in Outlook for Mac 2010 (14.7.7) may not be present in other versions. 
+
+
